@@ -40,9 +40,9 @@ DROP TABLE PRODUCT;
 CREATE TABLE PRODUCT( --값이 필요한경우 not null셋팅함
     CODE         VARCHAR2(2 BYTE) NOT NULL UNIQUE, -- NOT NULL(이칼럼은 값이 필요하다! UNIQUE 중복데이터 방지!)자바에선 String.code와 동일
     MODEL        VARCHAR2(10 BYTE), 
-    CATEGORY     VARCHAR2(5 BYTE),
+    CATEGORY     VARCHAR2(5 BYTE) CHECK(CATEGORY = 'MAIN' OR CATEGORY = 'SUB'), --CHECK(CATEGORY IN('MAIN', 'SUB'))
     PRICE        NUMBER             CHECK(PRICE >=0), -- 자리수 설정안하면 모든숫자라는 뜻(소수점X) / PRICE 가격이 0이상이다
-    AMOUNT       NUMBER(2)          CHECK(AMOUNT >=0 AND AMOUNT <= 100), -- 정수 타입 최대 2자리
+    AMOUNT       NUMBER(2)          CHECK(AMOUNT >=0 AND AMOUNT <= 100), -- CHECK(AMOUNT BETWEEN 0 AND 100)정수 타입 최대 2자리
     MANUFACTURED DATE -- 제조일(MANUFACTURED)
 );
     
