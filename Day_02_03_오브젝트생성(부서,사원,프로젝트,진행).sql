@@ -26,8 +26,8 @@ CREATE TABLE EMPLOYEE_TBL (
 
 -- 프로젝트 테이블 생성
 CREATE TABLE PROJECT_TBL (
-    PJT_NO      NUMBER            NOT NULL, -- 프로젝트번호
     PJT_NAME    VARCHAR2(30 BYTE) NULL, -- 프로젝트명
+    PJT_NO      NUMBER            NOT NULL, -- 프로젝트번호
     BEGIN_DATE  DATE              NULL, -- 시작일자
     END_DATE    DATE              NULL, -- 종료일자
     CONSTRAINT PK_PJT PRIMARY KEY(PJT_NO)
