@@ -17,6 +17,19 @@
         1) 생성 규칙 : "반드시" 부모 테이블을 먼저 생성한다.
         2) 삭제 규칙 : "반드시" 자식 테이블을 먼저 삭제한다.
 */
+/*
+    외래키 제약 조건의 옵션
+    1. ON DELETE CASCADE
+        1) 참조 중인 PARENT KEY가 삭제되면 해당 PARENT KEY를 가진 행 전체를 함께 삭제한다.
+        2) 예시) 회원 탈퇴시 작성한 모든 게시글이 함께 삭제됩니다.
+                 게시글 삭제 시 해당 게시글에 달린 모든 댓글이 함께 삭제됩니다.(게시글 테이블과 댓글테이블 각각 존재후 참조)
+                (PARENT KEY가 NOT NULL 값인경우 사용 가능)
+    2. ON DELETE SET NULL
+        1) 참조 중인 PARENT KEY가 삭제되면 해당 PARENT KEY를 가진 칼럼 값만 NULL로 처리한다.
+        2) 예시) 어떤 상품을 제거하였으나 해당 상품의 주문 내역은 남아 있는 경우
+           (게시글을 제거했으나, 데이터베이스에는 남아있는경우)
+*/             
+
 -- 순서
 -- 부모테이블 생성 > 자식테이블 생성 > 테이블 삭제
 
@@ -40,7 +53,7 @@ CREATE TABLE ORDER_TBL (
     PROD_NO NUMBER,-- 외래키(누굴 참조하는가)REFERENCES PRODUCT_TBL을(PROD_NO에 참조한다)
     ORDER_DATE DATE,
     CONSTRAINT PK_ORDER PRIMARY KEY(ORDER_NO),
-    CONSTRAINT FK_ORDER_PROD FOREIGN KEY(PROD_NO) REFERENCES PRODUCT_TBL(PROD_NO)
+    CONSTRAINT FK_ORDER_PROD FOREIGN KEY(PROD_NO) REFERENCES PRODUCT_TBL(PROD_NO) ON DELETE CASCADE--(또는 ON DELETE SET NULL)
 );
 
 /*
