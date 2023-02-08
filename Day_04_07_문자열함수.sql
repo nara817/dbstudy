@@ -57,6 +57,8 @@ SELECT
 SELECT
        LPAD(NVL(DEPARTMENT_ID,0), 3, '0') -- NULL이 나오면 NUL대신 0
      , RPAD(SUBSTR(EMAIL, 1, 2), 5, '*')
+--                         └─┘     
+--           └───────────────────┘
   FROM
        EMPLOYEES;  
        
