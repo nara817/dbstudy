@@ -38,6 +38,7 @@
 -- 1) 기본방식
 SELECT ENAME -- SELECT문의 결과는 TABLE / 칼럼(ENAME)이 1개인 12개의 테이블
   FROM EMP;
+  
 
 -- 2) 오너 명시하기(테이블을 가지고 있는 계정)
 SELECT ENAME
@@ -47,7 +48,7 @@ SELECT ENAME
 SELECT EMP.ENAME --  / EMP테이블의 ENAME(칼럼이름 앞에 .)
   FROM EMP;
 
--- 4) 테이블 별병 지정하기(테이블 이름이 길때 주로 사용)●●주로 사용●●
+-- 4) 테이블 별명 지정하기(테이블 이름이 길때 주로 사용)●●주로 사용●●
 SELECT E.ENAME
   FROM EMP E; -- EMP 테이블의 별명을 E로 부여한다. / AS(ALIAS)를 사용할 수 없다.
 
@@ -106,20 +107,3 @@ SELECT EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO
 SELECT EMPNO, ENAME, JOB, MGR, HIREDATE, SAL, COMM, DEPTNO
   FROM EMP
  WHERE ENAME LIKE 'A%';
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
