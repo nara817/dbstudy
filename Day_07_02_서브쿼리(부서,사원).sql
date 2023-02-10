@@ -28,6 +28,7 @@
 */
 
 /* WHERE절의 서브쿼리 */
+
 -- 1. 사원번호가 1001인 사원과 동일한 직급(POSITION)을 가진 사원을 조회하시오.
 --SELECT 사원정보                              ┐
 --  FROM 사원테이블                            │
@@ -134,10 +135,9 @@ SELECT EMP_NO, NAME, DEPART, GENDER, POSITION, HIRE_DATE, SALARY
                    FROM DEPARTMENT_TBL D INNER JOIN EMPLOYEE_TBL E
                      ON D.DEPT_NO = E.DEPART
                   WHERE D.DEPT_NAME = '영업부');
+                  
  
 /* SELECT절의 서브쿼리*/
-
-
 
 
 /*
@@ -159,15 +159,23 @@ SELECT EMP_NO, NAME, DEPART, GENDER, POSITION, HIRE_DATE, SALARY
     
 */
 
--- ROWID(가장빠른검색!, 조회할 주소를 알려준것!)
+-- ROWID
 SELECT ROWID, EMP_NO, NAME
   FROM EMPLOYEE_TBL;
+
+-- 오라클의 가장 빠른 검색은 ROWID를 이용한 검색이다.
+-- 실무에선 ROWID 사용이 불가능하기 때문에 대신 인덱스(INDEX)를 활용한다.
+SELECT EMP_NO, NAME
+  FROM EMPLOYEE_TBL
+ WHERE ROWID = 'AAAE9yAABAAALG5AAA';
+
 /*
     ROWNUM의 제약 사항
     1. ROWNUM이 1을 포함하는 범위를 조건으로 사용할 수 있다.
     2. ROWNUM이 1을 포함하지 않는 범위는 조건으로 사용할 수 없다.
     3. 모든 ROWNUM을 사용하려면 ROWNUM에 별명을 지정하고 그 별명을 사용하면된다.(AS절을 이용해서 SELECT)
 */  
+
 SELECT EMP_NO, NAME
   FROM EMPLOYEE_TBL
   WHERE ROWNUM = 1; -- ROWNUM 1을 포함한 범위가 사용되므로 가능!
@@ -191,9 +199,6 @@ SELECT EMP_NO, NAME
             FROM EMPLOYEE_TBL) E
    WHERE E.RN = 2; -- 위 실행 불가건, 서브쿼리 사용해서 해결!
 
-
-/* FROM절의 서브쿼리*/
-
 SELECT E.EMP_NO, E.NAME, E.DEPART
   FROM (SELECT EMP_NO, NAME, DEPART
          FROM EMPLOYEE_TBL) E; -- 서브쿼리의 별명이 E > 해당별명을 메인쿼리에서 사용 
@@ -202,3 +207,51 @@ SELECT E.EMP_NO, E.NAME, E.DEPART
   FROM (SELECT EMP_NO, NAME, DEPART
          FROM EMPLOYEE_TBL
          ORDER BY EMP_NO);-- 실행순서 조정 ORDER BY > SELECT
+         
+
+
+-- 1. 연봉이 2번째로 높은 사원을 조회하시오.(정렬, 번호붙인다음에 나중에 정렬함, 두번째행에 있는걸 가져오기..?)
+SELECT E.EMP_NO, E.NAME, E.DEPART, E.GENDER, E.POSITION, E.HIRE_DATE, E.SALARY
+  FROM (SELECT ROWNUM AS RN, EMP_NO, NAME, DEPART, GENDER, POSITION, HIRE_DATE, SALARY
+          FROM EMPLOYEE_TBL
+         ORDER BY SALARY DESC) E -- 순서가 잘못됨
+ WHERE E.RN = 2; -- 잘못된 식
+ 
+
+--- 1) ROWNUM 칼럼 사용하기
+SELECT E.EMP_NO, E.NAME, E.DEPART, E.GENDER, E.POSITION, E.HIRE_DATE, E.SALARY
+  FROM (SELECT ROWNUM AS RN, A.EMP_NO, A.NAME, A.DEPART, A.GENDER, A.POSITION, A.HIRE_DATE, A.SALARY
+        FROM (SELECT EMP_NO, NAME, DEPART, GENDER, POSITION, HIRE_DATE, SALARY
+                FROM EMPLOYEE_TBL
+               ORDER BY SALARY DESC) A) E -- 정렬한 테이블 이름A / 정렬 결과에 행번호 붙인 테이블 이름E
+ WHERE E.RN = 3;
+ 
+  --- 2) ROW_NUMBER() 함수 사용하기(정렬+행번호 합쳐짐)
+SELECT E.EMP_NO, E.NAME, E.DEPART, E.GENDER, E.POSITION, E.HIRE_DATE, E.SALARY
+  FROM (SELECT ROW_NUMBER() OVER(ORDER BY SALARY DESC) AS RN,EMP_NO, NAME, DEPART,GENDER, POSITION, HIRE_DATE, SALARY
+                FROM EMPLOYEE_TBL) E
+ WHERE E.RN = 3;   
+ 
+ /* FROM절의 서브쿼리*/
+ -- 2. 3~4번째로 입사한 사원을 조회하시오.
+ -- 1) 연봉순으로 정렬한다.
+ -- 2) 정렬 결과에 행번호(ROWNUM)를붙인다.
+ -- 3) 원하는 행 번호를 조회한다.
+ 
+ --- 1) ROWNUM 칼럼 사용하기
+SELECT E.EMP_NO, E.NAME, E.DEPART, E.GENDER, E.POSITION, E.HIRE_DATE, E.SALARY
+  FROM (SELECT ROWNUM AS RN, A.EMP_NO, A.NAME, A.DEPART, A.GENDER, A.POSITION, A.HIRE_DATE, A.SALARY
+        FROM (SELECT EMP_NO, NAME, DEPART, GENDER, POSITION, HIRE_DATE, SALARY
+                FROM EMPLOYEE_TBL
+               ORDER BY HIRE_DATE ASC) A) E 
+ WHERE E.RN = 3 OR E.RN = 4; -- 동일한 식 WHERE E.RN = BETWEEND 3 AND 4;
+ 
+   --- 2) ROW_NUMBER() 함수 사용하기
+SELECT E.EMP_NO, E.NAME, E.DEPART, E.GENDER, E.POSITION, E.HIRE_DATE, E.SALARY
+  FROM (SELECT ROWNUM AS RN, A.EMP_NO, A.NAME, A.DEPART, A.GENDER, A.POSITION, A.HIRE_DATE, A.SALARY
+        FROM (SELECT EMP_NO, NAME, DEPART, GENDER, POSITION, HIRE_DATE, SALARY
+                FROM EMPLOYEE_TBL
+               ORDER BY HIRE_DATE ASC) A) E 
+ WHERE E.RN = 3 OR E.RN = 4 
+    
+
