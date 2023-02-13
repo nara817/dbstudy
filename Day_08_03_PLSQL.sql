@@ -339,4 +339,161 @@ BEGIN
         DBMS_OUTPUT.PUT_LINE(N || '은(는) ' || MESSAGE || '입니다.');
     END LOOP;
 END;
+
+-- 사원번호가 100 ~ 260인 사원들의 연봉 평균을 출력하시오.
+-- 연봉 평균 = 연봉 합 / 사원 수
+
+
+DECLARE
+    EMP_ID EMPLOYEES.EMPLOYEE_ID%TYPE;
+    FNAME EMPLOYEES.FIRST_NAME%TYPE;
+    LNAME EMPLOYEES.LAST_NAME%TYPE;
+BEGIN
+    EMP_ID := 100;
+    WHILE EMP_ID <= 206 LOOP
+        SELECT FIRST_NAME, LAST_NAME
+          INTO FNAME, LNAME
+          FROM EMPLOYEES
+         WHERE EMPLOYEE_ID = EMP_ID;
+        DBMS_OUTPUT.PUT_LINE(FNAME || ' ' || LNAME);
+        EMP_ID := EMP_ID + 1;
+    END LOOP;
+END;
+
+-- DEPARTMENT_ID가 50인 사원들의 목록을 DEPT50테이블로 복사하시오.
+-- 1) DEPT50  테이블 만들기
+-- 2) 행 변수로 EMPLOYEES 테이블의 정보 읽기
+-- 3)
+
+DROP TABLE DEPT50;
+CREATE TABLE DEPT50
+    AS(SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, PHONE_NUMBER, HIRE_DATE, JOB_ID, SALARY, COMMISSION_PCT, MANAGER_ID, DEPARTMENT_ID
+        FROM EMPLOYEES
+       WHERE 1 = 2);
+       
+/*
+DECLARE
+    EMP_ID EMPLOYEES.EMPLOYEE_ID%TYPE;
+    EMP EMPLOYEES%ROWTYPE;
+BEGIN
+    FOR EMP_ID IN 100..206 LOOP
+        SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, PHONE_NUMBER, HIRE_DATE, JOB_ID, SALARY, COMMISSION_PCT, MANAGER_ID, DEPARTMENT_ID
+          INTO EMP
+          FROM EMPLOYEES
+         WHERE EMPLOYEE_ID = EMP_ID;
+        IF EMP.DEPARTMENT_ID = 50 THEN
+            INSERT INTO DEPT50 VALUES EMP;
+        END IF;
+    END LOOP;
+    COMMIT;
+END;
+*/
+-- 상위와 다른 방법
+
+DECLARE
+    EMP EMPLOYEES%ROWTYPE;
+BEGIN
+    FOR EMP IN (SELECT EMPLOYEE_ID, FIRST_NAME, LAST_NAME, EMAIL, PHONE_NUMBER, HIRE_DATE, JOB_ID, SALARY, COMMISSION_PCT, MANAGER_ID, DEPARTMENT_ID 
+                  FROM EMPLOYEES 
+                 WHERE DEPARTMENT_ID = 50) LOOP
+        INSERT INTO DEPT50 VALUES EMP;
+    END LOOP;
+    COMMIT;
+END;
+
+
+EXIT 
+
+/*
+    EXIT : 반복문 종료하기
+    COUNTINUE : LOOP문의 시작부터 다시 실행하기
+*/
+
+-- 1부터 정수 값을 누적하시오. 누적 값이 100을 초과하면 그만 누적하고 어디까지 누적했는지 출력하시오.
+DECLARE
+    N NUMBER;
+    TOTAL NUMBER;
+BEGIN
+    N := 1;
+    TOTAL := 0;
+    WHILE TRUE LOOP
+        IF TOTAL > 100 THEN
+            EXIT;
+     END IF;
+     TOTAL := TOTAL + N;
+     N := N + 1;
+ END LOOP;
+ DBMS_OUTPUT.PUT_LINE('1부터' || N || '까지 합은' || TOTAL || '입니다.');
+END;
+
+-- 1부터 3의 배수를 제외한 정수 값을 누적하시오. 누적 값이 100을 초과하면 그만 누적하고 어디까지 누적했는지 출력하시오.
+DECLARE
+    N NUMBER;
+    TOTAL NUMBER;
+    MODULAR NUMBER(1);
+BEGIN
+    N := 0;
+    TOTAL := 0;
+    WHILE TRUE LOOP
+        N := N + 1;
+        IF TOTAL > 100 THEN
+            EXIT;
+     END IF;
+     SELECT MOD(N , 3) -- N을 3으로 고정해서 돌림
+       INTO MODULAR
+       FROM DUAL;
+    IF MODULAR = 0 THEN
+        CONTINUE;
+    END IF;
+     TOTAL := TOTAL + N;
+ END LOOP;
+ DBMS_OUTPUT.PUT_LINE(TOTAL || '입니다.');
+END;
+
+/*
+    예외처리 구문
+    EXCEPTION
+        WHEN 예외종류 THEN
+            예외처리
+        WHEN 예외종류 THEN
+            예외처리
+        WHEN OTHERS THEN -- OTHERS 모든 나머지 예외
+            예외처리
+*/
+DECLARE
+    FNAME EMPLOYEES.FIRST_NAME%TYPE;
+BEGIN
+    SELECT FIRST_NAME
+      INTO FNAME
+      FROM EMPLOYEES
+     WHERE EMPLOYEE_ID = 0;
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('조회된 데이터가 없습니다.');
+END;
         
+DECLARE
+    FNAME EMPLOYEES.FIRST_NAME%TYPE;
+BEGIN
+    SELECT FIRST_NAME
+      INTO FNAME
+      FROM EMPLOYEES
+    WHERE DEPARTMENT_ID = 50;
+EXCEPTION
+    WHEN TOO_MANY_ROWS THEN
+        DBMS_OUTPUT.PUT_LINE(SQLERRM);
+        DBMS_OUTPUT.PUT_LINE('조회된 데이터가 2개 이상입니다.');    
+END;
+
+DECLARE
+    FNAME EMPLOYEES.FIRST_NAME%TYPE;
+BEGIN
+    SELECT FIRST_NAME
+      INTO FNAME
+      FROM EMPLOYEES
+     WHERE EMPLOYEE_ID = 0;
+EXCEPTION
+    WHEN OTHERS THEN
+        DBMS_OUTPUT.PUT_LINE(SQLCODE);
+        DBMS_OUTPUT.PUT_LINE(SQLERRM);
+END;
