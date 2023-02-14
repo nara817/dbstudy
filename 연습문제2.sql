@@ -1,24 +1,45 @@
 -- 1. 다음 설명을 읽고 적절한 테이블을 생성하되, 기본키/외래키는 별도로 설정하지 마시오.
+-- 테이블 삭제
+DROP TABLE ORDER_TBL;
+DROP TABLE CUSTOMER_TBL;
+DROP TABLE BOOK_TBL;
 
 -- 1) BOOK_TBL 테이블
 --    (1) BOOK_ID : 책번호, 숫자 (최대 11자리), 필수
 --    (2) BOOK_NAME : 책이름, 가변 길이 문자 (최대 100 BYTE)
 --    (3) PUBLISHER : 출판사, 가변 길이 문자 (최대 50 BYTE)
 --    (4) PRICE : 가격, 숫자 (최대 6자리)
-
+CREATE TABLE BOOK_TBL (
+    BOOK_ID    NUMBER(11) NOT NULL,
+    BOOK_NAME  VARCHAR2(100 BYTE),
+    PUBLISHER  VARCHAR2(5. BYTE),
+    PRICE      NUMBER(6)
+);
 -- 2) CUSTOMER_TBL 테이블
 --    (1) CUSTOMER_ID : 고객번호, 숫자 (최대 11자리), 필수
 --    (2) CUSTOMER_NAME : 고객명, 가변 길이 문자 (최대 20 BYTE)
 --    (3) ADDRESS : 주소, 가변 길이 문자 (최대 50 BYTE)
 --    (4) PHONE : 전화, 가변 길이 문자 (최대 20 BYTE)
-
+CREATE TABLE CUSTOMER_TBL (
+    CUSTOMR_ID  NUMBER(11) NOT NULL,
+    CUSTOMR_NAME VARCHAR2(20 BYTE),
+    ADDRESS      VARCHAR2(50 BYTE),
+    PHONE        VARCHER2(20 BYTE)
+    );
 -- 3) ORDER_TBL 테이블
 --    (1) ORDER_ID : 주문번호, 가변 길이 문자 (최대 20 바이트), 필수
 --    (2) CUSTOMER_ID : 고객번호, 숫자 (최대 11자리)
 --    (3) BOOK_ID : 책번호, 숫자 (최대 11자리)
 --    (4) AMOUNT : 판매수량, 숫자 (최대 2자리)
 --    (5) ORDER_DATE : 주문일, 날짜
-
+CREATE TABLE ORDER_TBL (
+    ORDER_ID     VARCHAR2(20 BYTE), NOT NULL,
+    COUSTOMER_ID NUMBER(11),
+    BOOK_ID      NUMBER(11),
+    AMOUNT       NUMBER(2),
+    ORDER_DATE   DATE
+);
+    
 
 -- 2. 1부터 1씩 증가하는 값을 생성하는 BOOK_SEQ 시퀀스를 생성한 뒤, BOOK_SEQ를 이용하여 BOOK_TBL 테이블에 INSERT를 수행하시오.
 /*
