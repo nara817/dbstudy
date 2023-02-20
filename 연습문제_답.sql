@@ -5,6 +5,8 @@
 --    4) 회원포인트: POINT, NUMBER
 --    5) 회원등급: GRADE, VARCHAR2(10 BYTE), 'VIP', 'GOLD', 'SILVER', 'BRONZE' 값 중 하나를 가짐
 --    6) 회원이메일: EMAIL, VARCHAR2(100 BYTE), 중복 불가
+
+-- CHECK 주어진 조건에 해당하는 값만 입력 가능
 CREATE TABLE MEMBER_TBL (
     MEMBER_NO NUMBER NOT NULL,
     ID VARCHAR2(30 BYTE) NOT NULL UNIQUE,
@@ -17,24 +19,33 @@ CREATE TABLE MEMBER_TBL (
 -- 2. MEMBER_TBL 테이블에 다음 새로운 칼럼을 추가하시오.
 --    1) 회원주소: ADDRESS VARCHAR2(200 BYTE)
 --    2) 회원가입일: REGIST_DATE DATE
+-- ALTER
+-- ADD 테이블에 새로운 컬럼 추가, 새로운 제약조건 추가
 ALTER TABLE MEMBER_TBL 
     ADD ADDRESS VARCHAR2(200 BYTE);
 ALTER TABLE MEMBER_TBL 
     ADD REGIST_DATE DATE;
 
 -- 3. 추가된 회원주소 칼럼을 다시 삭제하시오.
+-- ALTER
+-- DROP 테이블에서 컬럼 삭제, 제약조건 삭제
 ALTER TABLE MEMBER_TBL
     DROP COLUMN ADDRESS;
 
 -- 4. 회원등급 칼럼의 타입을 VARCHAR2(20 BYTE)으로 수정하시오.
+-- ALTER 
+-- MODIFY 테이블 컬럼 유형 변경
 ALTER TABLE MEMBER_TBL
     MODIFY GRADE VARCHAR2(20 BYTE);
 
 -- 5. 회원패스워드 칼럼의 이름을 PWD로 수정하시오.
+-- ALTER 
+-- RENAME 테이블 이름, 컬럼 이름, 제약조건 이름 변경
 ALTER TABLE MEMBER_TBL
     RENAME COLUMN PW TO PWD;
 
 -- 6. 회원번호 칼럼에 기본키(PK_MEMBER)를 설정하시오.
+-- CONSTRAINT 제약조건
 ALTER TABLE MEMBER_TBL
     ADD CONSTRAINT PK_MEMBER PRIMARY KEY(MEMBER_NO);
 
@@ -55,10 +66,14 @@ CREATE TABLE BOARD_TBL (
 );
 
 -- 8. 조회수 칼럼의 타입을 NUMBER로 수정하시오.
+-- ALTER
+-- MODIFY
 ALTER TABLE BOARD_TBL
     MODIFY HIT NUMBER;
 
 -- 9. 글내용 칼럼의 필수 제약조건을 제거하시오.
+-- ALTER
+-- MODIFY
 ALTER TABLE BOARD_TBL
     MODIFY CONTENT VARCHAR2(4000 BYTE) NULL;
 
@@ -68,6 +83,9 @@ ALTER TABLE BOARD_TBL
 
 -- 11. 작성자 칼럼에 MEMBER_TBL 테이블의 회원아이디를 참조하는 FK_BOARD_MEMBER 외래키를 설정하시오.
 -- 게시글을 작성한 회원 정보가 삭제되면 해당 회원이 작성한 게시글도 모두 함께 지워지도록 처리하시오.
+-- ALTER
+-- ADD CONSTRAINT FK_원테이블_참조할할테이블 FOREIGN KEY(원테이블의 칼럼)
+-- REFERENCES 참조할할테이블_TBL(참조할 칼럼)
 ALTER TABLE BOARD_TBL
     ADD CONSTRAINT FK_BOARD_MEMBER FOREIGN KEY(WRITER)
         REFERENCES MEMBER_TBL(ID)

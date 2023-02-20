@@ -49,4 +49,3 @@ CREATE TABLE PRODUCT( --값이 필요한경우 not null셋팅함
     AMOUNT       NUMBER(2)          CHECK(AMOUNT >=0 AND AMOUNT <= 100), -- CHECK(AMOUNT BETWEEN 0 AND 100)정수 타입 최대 2자리
     MANUFACTURED DATE -- 제조일(MANUFACTURED)
 );
-    
