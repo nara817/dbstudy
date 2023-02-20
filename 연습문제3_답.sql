@@ -104,14 +104,17 @@ COMMIT;
 
 
 -- 1. 제품 테이블에서 제품명이 '책'인 제품의 카테고리를 '서적'으로 수정하시오.DML문제
--- UPDATE 테이블 이름
--- SET 수정할 내용
--- WHERE 제품의 이름
+-- UPDATE 제품 테이블(조회할 테이블명)
+-- SET 제품_카테고리 = '서적'(수정할 내용)
+-- WHERE 제품_명(원래 내용) = '책'
 UPDATE PRODUCTS
    SET PROD_CATEGORY = '서적'
  WHERE PROD_NAME = '책';
 
 -- 2. 연락처1이 '011'인 사용자의 연락처1을 모두 '010'으로 수정하시오.DML문제
+-- UPDATE 사용자 테이블(조회할 테이블명)
+-- SET 사용자의 연락처1 = '010'(수정할 내용)
+-- WHERE 사용자의 연락처1 = '011'(원래 내용)
 UPDATE USERS
    SET USER_MOBILE1 = '010'
  WHERE USER_MOBILE1 = '011';
@@ -119,25 +122,32 @@ UPDATE USERS
 -- 3. 사용자 테이블에서 사용자번호가 5인 사용자를 삭제하시오.DML문제
 --    사용자번호가 5인 사용자의 구매 내역을 먼저 삭제한 뒤 진행하시오. // 구매내역은 BUY테이블에 있으나, 번호가 없음 USER_NO로 비교 불가
 -- DELETE
--- FROM 테이블이름
+-- FROM 구매 테이블명(조회할 테이블명)
 -- WHERE USER_ID=(사용자 번호가 5번인 사용자의 USER_ID를 따로 계산 해줘야함!;) --서브쿼리
+--                                       ㄴ사용자의 구매내역을 알려면, 사용자의 ID 확인 필요!
+-- WHERE 사용자_아이디 = (SELECT 사용자_아이디
+-- FROM 사용자 테이블명
+-- WHERE 사용자_번호 = 5(조건 삭제할 내용)
 
 -- DELETE 
--- FROM 테이블이름
--- WHERE 조건
-DELETE 
+-- FROM 사용자 테이블명(조회할 테이블명)
+-- WHERE 사용자_번호 = 5(조건 삭제할 내용)
+DELETE
   FROM BUYS
  WHERE USER_ID = (SELECT USER_ID
                     FROM USERS
-                    WHERE USER_NO = 5);
-                    
-DELETE 
-  FROM USER 
+                   WHERE USER_NO = 5);
+
+DELETE
+  FROM USERS
  WHERE USER_NO = 5;
 
 COMMIT;
 
 -- 4. 연락처1이 없는 사용자의 사용자번호, 아이디, 연락처1, 연락처2를 조회하시오.SELECT문제
+-- SELECT 사용자_번호, 사용자_아이디, 연락처1, 연락처2(조회할 칼럼)
+-- FROM 사용자테이블명(조회할 테이블명)
+-- WHERE 연락처1이 없는(조건)
 SELECT USER_NO, USER_ID, USER_MOBILE1, USER_MOBILE2
   FROM USERS
  WHERE USER_MOBILE1 IS NULL;
@@ -147,7 +157,7 @@ SELECT USER_NO, USER_ID, USER_MOBILE1, USER_MOBILE2
 SELECT USER_NO, USER_ID, USER_MOBILE1, USER_MOBILE2
   FROM USERS
 -- 와일드 카드 사용 LIKE 5로 시작한다
- WHERE USER_MOBILE2 LIKE '5%'; 
+ WHERE USER_MOBILE2 LIKE '5%';
 
 
 -- 6. 제품을 구매한 사용자의 아이디별 구매횟수를 조회하시오.SELECT문제 어려움!!
@@ -187,9 +197,9 @@ FROM USERS U INNER JOIN BUYS B
 -- PROD_PRICE * BUY_AMOUNT = 구매총액
 -- USER + USERID 합쳐야 하므로, 그룹바이절에, 구매액을 더하겠다(SUM(P.PROD_PRICE * B.BUY_AMOUNT))
 SELECT U.USER_ID AS 아이디
-    , U.USER_NAME AS 고객명 
-    , COUNT(*) AS 구매횟수
-    , SUM(P.PROD_PRICE * B.BUY_AMOUNT) AS 총구매액
+     , U.USER_NAME AS 고객명
+     , COUNT(*) AS 구매횟수
+     , SUM(P.PROD_PRICE * B.BUY_AMOUNT) AS 총구매액
   FROM USERS U INNER JOIN BUYS B
     ON U.USER_ID = B.USER_ID INNER JOIN PRODUCTS P
     ON B.PROD_CODE = P.PROD_CODE
@@ -226,10 +236,10 @@ SELECT U.USER_ID AS 아이디
 SELECT U.USER_ID AS 아이디
      , U.USER_NAME AS 고객명
      , COUNT(B.BUY_NO) AS 구매횟수
- FROM USERS U LEFT OUTER JOIN BUYS B
-   ON U.USER_ID = B.USER_ID
-GROUP BY U.USER_ID, U.USER_NAME
-ORDER BY U.USER_ID;
+  FROM USERS U LEFT OUTER JOIN BUYS B
+    ON U.USER_ID = B.USER_ID
+ GROUP BY U.USER_ID, U.USER_NAME
+ ORDER BY U.USER_ID;
 
 -- 9. 카테고리가 '전자'인 제품을 구매한 고객의 고객명, 제품명, 구매액을 조회하시오. >> 이너조인
 -- 고객명  제품명  구매액
@@ -239,8 +249,13 @@ ORDER BY U.USER_ID;
 -- 박수홍  모니터  1000
 
 -- 테이블3개필요함  고객명, 제품명, 구매액 
-
-
+SELECT U.USER_NAME AS 고객명
+     , P.PROD_NAME AS 제품명
+     , P.PROD_PRICE * B.BUY_AMOUNT AS 구매액
+  FROM USERS U INNER JOIN BUYS B
+    ON U.USER_ID = B.USER_ID INNER JOIN PRODUCTS P
+    ON B.PROD_CODE = P.PROD_CODE
+ WHERE P.PROD_CATEGORY = '전자';
 
 -- 10. 구매횟수가 2회 이상인 고객명과 구매횟수를 조회하시오. >> 이너조인
 -- 고객명  구매횟수
@@ -248,6 +263,12 @@ ORDER BY U.USER_ID;
 -- 이휘재  2
 -- 강호동  3
 
+SELECT U.USER_NAME AS 고객명
+     , COUNT(*) AS 구매횟수
+  FROM USERS U INNER JOIN BUYS B
+    ON U.USER_ID = B.USER_ID
+ GROUP BY U.USER_NAME, U.USER_ID
+HAVING COUNT(*) >= 2;
 
 
 -- 11. 모든 제품의 제품명과 판매횟수를 조회하시오.
@@ -261,6 +282,11 @@ ORDER BY U.USER_ID;
 -- 청바지  2
 -- 노트북  1
 
+SELECT P.PROD_NAME AS 제품명
+     , COUNT(B.BUY_NO) AS 판매횟수
+  FROM PRODUCTS P LEFT OUTER JOIN BUYS B
+    ON P.PROD_CODE = B.PROD_CODE
+ GROUP BY P.PROD_CODE, P.PROD_NAME;
 
 
 -- 12. 어떤 고객이 어떤 제품을 구매했는지 조회하시오. >> 서브쿼리
@@ -299,8 +325,8 @@ SELECT U.USER_NAME AS 고객명
     ON U.USER_ID = B.USER_ID;*/
 SELECT U.USER_NAME AS 고객명
      , (SELECT P.PROD_NAME
-          FROM PROUDUCTS P
-        WHERE P.PROD_CODE = B.PROD_CODE)
+          FROM PRODUCTS P
+         WHERE P.PROD_CODE = B.PROD_CODE)
   FROM USERS U LEFT OUTER JOIN BUYS B
     ON U.USER_ID = B.USER_ID
  ORDER BY U.USER_ID;
