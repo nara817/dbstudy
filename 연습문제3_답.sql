@@ -125,7 +125,7 @@ UPDATE USERS
 -- FROM 구매 테이블명(조회할 테이블명)
 -- WHERE USER_ID=(사용자 번호가 5번인 사용자의 USER_ID를 따로 계산 해줘야함!;) --서브쿼리
 --                                       ㄴ사용자의 구매내역을 알려면, 사용자의 ID 확인 필요!
--- WHERE 사용자_아이디 = (SELECT 사용자_아이디
+-- WHERE 사용자_아이디 = (SELECT 사용자_아이디)
 -- FROM 사용자 테이블명
 -- WHERE 사용자_번호 = 5(조건 삭제할 내용)
 
@@ -154,6 +154,7 @@ SELECT USER_NO, USER_ID, USER_MOBILE1, USER_MOBILE2
 
 
 -- 5. 연락처2가 '5'로 시작하는 사용자의 사용자번호, 아이디, 연락처1, 연락처2를 조회하시오.SELECT문제
+-- SELECT 사용자_번호, 사용자_아이디, 연락처1, 연락처2(조회할 칼럼)
 SELECT USER_NO, USER_ID, USER_MOBILE1, USER_MOBILE2
   FROM USERS
 -- 와일드 카드 사용 LIKE 5로 시작한다
