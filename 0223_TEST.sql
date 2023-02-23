@@ -1,0 +1,33 @@
+-- 사원번호를 전달하면 해당 사원의 이름을 반환하는 함수 만들기
+-- 기본틀 CREATE OR REPLACE FUNCTION GET_NAME(변수를 받을 수 있는 (파라미터:원래 칼럼이름은 쓰면 안댐!!))타입.EMP_NO와 같은 타입
+-- RETURN VARCHAR2(사원이름의 타입 사이즈 안적음!!)
+--IS  테이블이름이 NAME이므로 동일한 이름만 아님 됨(변수이름)
+--      FROM EMPLOYEE_TBL > EMPLOYEE_TBL 에서 이름 가져와
+-- WHERE 이름 다가져오지말고 
+CREATE OR REPLACE FUNCTION GET_NAME(EMPNO EMPLOYEE_TBL.EMP_NO%TYPE)
+RETURN VARCHAR2
+IS
+    EMPNAME EMPLOYEE_TBL.NAME%TYPE;
+BEGIN
+    SELECT NAME
+    INTO EMPNAME
+      FROM EMPLOYEE_TBL
+    WHERE EMP_NO = EMPNO;
+    RETURN EMPNAME;
+END;
+
+
+-- 사원 전체 조회
+SELECT GET_NAME(EMP_NO) AS 사원명
+  FROM EMPLOYEE_TBL;
+
+-- 구창민 1번만 조회
+SELECT DISTINCT GET_NAME(EMP_NO) AS 사원명
+  FROM EMPLOYEE_TBL;
+  
+-- 사원명
+-- 구창민
+SELECT GET_NAME(1001) AS 사원명
+  FROM EMPLOYEE_TBL
+ WHERE EMP_NO = 1001; 
+  
