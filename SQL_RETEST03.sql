@@ -62,36 +62,67 @@ COMMIT;
 
 -- 1. 구매(BUYS) 테이블에서 구매개수(BUY_AMOUNT)의 평균을 정수로 내림 처리해서 조회하는 쿼리문을 작성하시오. (5점)
 
+SELECT FLOOR(AVG(BUY_AMOUNT)) AS "구매개수의 평균"
+  FROM BUYS;
+
   
 
 -- 2. 사용자(USERS) 테이블에서 가입일(USER_REGDATE)로부터 현재까지 경과한 일수를 조회하는 쿼리문을 작성하시오. 결과의 소수점은 정수로 반올림해서 조회하시오. (5점)
+SELECT ROUND(SYSDATE - USER_REGDATE) AS "현재까지의 가입일자"
+  FROM USERS;
 
+  
 
 -- 3. 사용자(USERS) 테이블의 태어난년도(USER_YEAR) 칼럼을 이용하여 가장 나이가 많은 사용자가 태어난년도를 조회하는 쿼리문을 작성하시오. (5점)
-
+  
+SELECT USER_YEAR
+  FROM USERS
+ WHERE USER_YEAR =(SELECT MIN(USER_YEAR) FROM USERS);
 
 -- 4. 사용자(USERS) 테이블의 태어난년도(USER_YEAR) 칼럼을 이용하여 가장 나이가 적은 사용자의 이름(USER_NAME)을 조회하는 쿼리문을 작성하시오. (5점)
 
+SELECT USER_YEAR
+  FROM USERS
+ WHERE USER_YEAR =(SELECT MAX(USER_YEAR) FROM USERS);
 
 -- 5. 특정 테이블을 가지고 있는 SCOTT 사용자 계정을 제거하는 쿼리문을 작성하시오.
 -- SCOTT 사용자 계정이 제거되면서 테이블도 함께 삭제될 수 있도록 옵션을 사용하시오.
 -- 단, 실제로 SCOTT 사용자 계정을 제거하지는 말고 쿼리문만 작성하시오. (5점)
 
+DROP USER SCOTT CASCADE;
 
--- 6. 다음 사용자를 생성하는 쿼리문과 생성된 사용자에게 권한을 부여하는 쿼리문을 각각 모두 작성하시오. (5점)
+
+
+-- 6. 다음 사용자를 생성하는 쿼리문과 생성된 사용자에게 권한을 부여하는 쿼리문을 각각 모두 작성하시오.
 --    1) 사용자명 : ADMIN
 --    2) 비밀번호 : 1234
 --    3) 사용권한 : DBA
 
+CREATE USER ADMIN IDENTIFIED BY 1234;
+ GRANT DBA TO ADMIN;
 
 -- 7. 모든 고객의 고객아이디, 고객명, 구매횟수를 조회하시오. 외부조인을 사용하시오. (10점)
    
+SELECT U.USER_ID AS 고객아이디, U.USER_NAME AS 고객명, COUNT(B.BUY_AMOUNT) AS 구매횟수
+FROM USERS U LEFT OUTER JOIN BUYS B
+ON U.USER_ID = B.USER_ID
+GROUP BY U.USER_ID, U.USER_NAME;
+
 
 -- 8. 카테고리가 '전자'인 제품을 구매한 고객아이디, 고객명, 총구매액을 조회하시오. (10점)
 
+SELECT U.USER_ID AS 고객아이디, U.USER_NAME AS 고객명, B.PROD_PRICE * B.BUY_AMOUNT AS 총구매액
+  FROM USERS U INNER JOIN BUYS B
+    ON U.USER_ID = B.USER_ID
+ WHERE B.PROD_CATEGORY = '전자';
 
 -- 9. 구매횟수가 2회 이상인 고객아이디, 고객명, 구매횟수를 조회하시오. 내부조인을 사용하시오. (10점)
 
+SELECT U.USER_NAME AS 고객명, COUNT(*) AS 구매횟수
+  FROM USERS U INNER JOIN BUYS B
+    ON U.USER_ID = B.USER_ID
+ GROUP BY U.USER_NAME, U.USER_ID
+HAVING COUNT(*) >= 2;
 
 -- 10. 태어난년도(USER_YEAR)가 1960년인 사용자의 이름을 서버메시지로 출력할 수 있는 USER_PROC 프로시저를 작성하시오.
 -- 작성된 USER_PROC 프로시저를 호출하기 위한 코드도 함께 작성하시오.
