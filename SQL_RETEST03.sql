@@ -117,23 +117,23 @@ END;
 EXECUTE USER_PROC();
 
 
--- 11. 사용자의 아이디(USER_ID)를 전달하면 해당 아이디를 가진 사용자의 구매총액(PROD_PRICE * BUY_AMOUNT)의 합계를 계산한 뒤 합계가 1000 이상이면 'A', 1000 미만 500 이상이면 'B', 500 미만이면 'C'를 반환하는 GET_GRADE() 사용자 함수를 작성하시오. 아이디가 'KHD'인 사용자의 이름(USER_NAME)과 GET_GRADE() 함수의 결과를 조회하는 쿼리문을 작성하시오. (함수 작성 8점, 함수 결과 조회 2점)
-
+-- 11. 사용자의 아이디(USER_ID)를 전달하면 해당 아이디를 가진 사용자의 구매총액(PROD_PRICE * BUY_AMOUNT)의 합계를 계산한 뒤 합계가 1000 이상이면 'A', 1000 미만 500 이상이면 'B', 500 미만이면 'C'를 반환하는 GET_GRADE() 사용자 함수를 작성하시오.
+--     아이디가 'KHD'인 사용자의 이름(USER_NAME)과 GET_GRADE() 함수의 결과를 조회하는 쿼리문을 작성하시오. (함수 작성 8점, 함수 결과 조회 2점)
 CREATE OR REPLACE FUNCTION GET_GRADE(USERID USERS.USER_ID%TYPE)
 RETURN VARCHAR2
-IS 
+IS
     BUY_TOTAL NUMBER;
 BEGIN
     SELECT SUM(PROD_PRICE * BUY_AMOUNT)
-    INTO BUY_TOTAL
-    FROM BUYS
-    WHERE USER_ID = USERID;
+      INTO BUY_TOTAL
+      FROM BUYS
+     WHERE USER_ID = USERID;
     IF BUY_TOTAL >= 1000 THEN
         RETURN 'A';
-    ELSIF BUY_TOTAL >=500 THEN
+    ELSIF BUY_TOTAL >= 500 THEN
         RETURN 'B';
     ELSE
-        RETURN 'C;
+        RETURN 'C';
     END IF;
 END;
 
@@ -141,9 +141,13 @@ SELECT USER_NAME AS 고객명, GET_GRADE('KHD') AS 등급
   FROM USERS
  WHERE USER_ID = 'KHD';
 
--- 12. 구매(BUYS) 테이블의 각 행(Row)이 수정(UPDATE)되거나 추가(INSERT)된 이후에 '구매내역이 변동되었습니다.'라는 서버메시지를 출력하는 BUYS_TRIG 트리거를 작성하시오. (10점)
+-- 팁. 모든 고객의 등급 확인은?
+SELECT USER_NAME AS 고객명, GET_GRADE(USER_ID) AS 등급
+  FROM USERS;
 
-CREATE OR REPLACE TIGGER BUYS_TRIG
+
+-- 12. 구매(BUYS) 테이블의 각 행(Row)이 수정(UPDATE)되거나 추가(INSERT)된 이후에 '구매내역이 변동되었습니다.'라는 서버메시지를 출력하는 BUYS_TRIG 트리거를 작성하시오. (10점)
+CREATE OR REPLACE TRIGGER BUYS_TRIG
     AFTER
     UPDATE OR INSERT
     ON BUYS
