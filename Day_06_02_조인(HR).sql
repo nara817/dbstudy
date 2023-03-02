@@ -16,9 +16,9 @@
 -- 사원들의 매니저번호 - 매니저의 사원번호
 SELECT 
       E.EMPLOYEE_ID, E.FIRST_NAME, E.LAST_NAME -- 각 사원들의 정보
-    , M.FIRST_NAME                             -- 매니저 정보
+    , M.FIRST_NAME                             -- 매니저 정보 (JOB_ID)
   FROM
-      EMPLOYEES E LEFT OUTER JOIN JOIN EMPLOYEES M
+      EMPLOYEES E LEFT OUTER JOIN EMPLOYEES M
    ON 
       E.MANAGER_ID = M.EMPLOYEE_ID
 ORDER BY

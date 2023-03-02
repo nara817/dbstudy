@@ -34,7 +34,7 @@ UPDATE EMPLOYEES
     SET LAST_NAME = 'Queen'
  WHERE EMPLOYEE_ID = 100;
  
-ROLLBACK; -- 다시 킹에서 퀸으로 되돌리기
+-- ROLLBACK; -- 다시 킹에서 퀸으로 되돌리기(잘못 했을경우 이거 실행하기!)
 
 -- TRIG1 삭제
 DROP TRIGGER TRIG1;
