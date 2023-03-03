@@ -74,12 +74,14 @@ SELECT ROUND(SYSDATE - USER_REGDATE) AS 가입기간
   
 
 -- 3. 사용자(USERS) 테이블의 태어난년도(USER_YEAR) 칼럼을 이용하여 가장 나이가 많은 사용자가 태어난년도를 조회하는 쿼리문을 작성하시오. (5점)
-  
+-- MAX사용해야하나, AGE가 아닌 YEAR이니까 MIN
+
 SELECT USER_YEAR AS 최고연장자
   FROM USERS
  WHERE USER_YEAR =(SELECT MIN(USER_YEAR) FROM USERS);
 
 -- 4. 사용자(USERS) 테이블의 태어난년도(USER_YEAR) 칼럼을 이용하여 가장 나이가 적은 사용자의 이름(USER_NAME)을 조회하는 쿼리문을 작성하시오. (5점)
+-- MIN사용해야하나, AGE가 아닌 YEAR이니까 MIN
 
 SELECT USER_NAME
   FROM USERS
@@ -102,14 +104,26 @@ CREATE USER ADMIN IDENTIFIED BY 1234;
  GRANT DBA TO ADMIN;
 
 -- 7. 모든 고객의 고객아이디, 고객명, 구매횟수를 조회하시오. 외부조인을 사용하시오. (10점)
-   
-SELECT U.USER_ID AS 아이디, U.USER_NAME AS 고객명, COUNT(B.BUY_AMOUNT) AS 구매횟수
+-- 모든 결과 외부조인 / 일치하는 결과 내부조인
+-- USERS_TBL BUYS_TBL - USER_ID
+
+SELECT U.USER_ID AS 아이디
+     , U.USER_NAME AS 고객명
+     , COUNT(B.BUY_AMOUNT) AS 구매횟수
 FROM USERS U LEFT OUTER JOIN BUYS B
 ON U.USER_ID = B.USER_ID
 GROUP BY U.USER_ID, U.USER_NAME;
 
 
 -- 8. 카테고리가 '전자'인 제품을 구매한 고객아이디, 고객명, 총구매액을 조회하시오. (10점)
+--SELECT U.USER_ID AS 고객아이디
+--      , U.USER_NAME AS 고객명
+--      , B.PROD_PRICE * B.BUY_AMOUNT AS 총구매액
+--  FROM USERS U INNER JOIN BUYS B
+--    ON U.USER_ID = B.USER_ID
+-- WHERE B.PROD_CATEGORY = '전자'
+-- GROUP BY U.USER_NAME, U.USER_ID
+
 
 SELECT U.USER_ID AS 고객아이디
       , U.USER_NAME AS 고객명
@@ -123,7 +137,7 @@ SELECT U.USER_ID AS 고객아이디
 
 
 -- 9. 구매횟수가 2회 이상인 고객아이디, 고객명, 구매횟수를 조회하시오. 내부조인을 사용하시오. (10점)
-
+-- ★★★★ 여쭤보기! 칼럼에 NULL 값이 없음, 칼럼이름으로 가능
 --SELECT U.USER_ID AS 고객아이디, U.USER_NAME AS 고객명, COUNT(BUY_AMOUNT) AS 구매횟수
 --  FROM USERS U INNER JOIN BUYS B
 --    ON U.USER_ID = B.USER_ID
