@@ -111,23 +111,33 @@ GROUP BY U.USER_ID, U.USER_NAME;
 
 -- 8. 카테고리가 '전자'인 제품을 구매한 고객아이디, 고객명, 총구매액을 조회하시오. (10점)
 
-SELECT U.USER_ID AS 고객아이디,
-        U.USER_NAME AS 고객명,
-        SUM(B.PROD_PRICE * B.BUY_AMOUNT) AS 총구매액
+SELECT U.USER_ID AS 고객아이디
+      , U.USER_NAME AS 고객명
+      , SUM(B.PROD_PRICE * B.BUY_AMOUNT) AS 총구매액
   FROM USERS U INNER JOIN BUYS B
     ON U.USER_ID = B.USER_ID
  WHERE B.PROD_CATEGORY = '전자'
- GROUP BY U.USER_NAME, U.USER_ID;
+ GROUP BY U.USER_NAME, U.USER_ID
+ ORDER BY SUM(B.PROD_PRICE * B.BUY_AMOUNT) ASC;
 
 
 
 -- 9. 구매횟수가 2회 이상인 고객아이디, 고객명, 구매횟수를 조회하시오. 내부조인을 사용하시오. (10점)
 
+--SELECT U.USER_ID AS 고객아이디, U.USER_NAME AS 고객명, COUNT(BUY_AMOUNT) AS 구매횟수
+--  FROM USERS U INNER JOIN BUYS B
+--    ON U.USER_ID = B.USER_ID
+-- GROUP BY U.USER_NAME, U.USER_ID
+--HAVING COUNT(BUY_AMOUNT) >= 2;
+--ORDER BY COUNT(BUY_AMOUNT) ASC;
+
 SELECT U.USER_ID AS 고객아이디, U.USER_NAME AS 고객명, COUNT(*) AS 구매횟수
   FROM USERS U INNER JOIN BUYS B
     ON U.USER_ID = B.USER_ID
  GROUP BY U.USER_NAME, U.USER_ID
-HAVING COUNT(*) >= 2;
+HAVING COUNT(BUY_AMOUNT) >= 2
+ORDER BY COUNT(*) ASC;
+
 
 -- 10. 태어난년도(USER_YEAR)가 1960년인 사용자의 이름을 서버메시지로 출력할 수 있는 USER_PROC 프로시저를 작성하시오.
 -- 작성된 USER_PROC 프로시저를 호출하기 위한 코드도 함께 작성하시오.
